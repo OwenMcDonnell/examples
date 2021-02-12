@@ -69,15 +69,34 @@ async function queryAlbums(p, searchString) {
     console.log(returnData);
     let returnArray = returnData['release-groups'];       
     console.log(returnArray);
+    await p.send(`
+        clean results:gridItems
 
+    `)
+    await p.send(`  
+        add 
+        stack width='100%' id=results
+            grid compact=false selection=none preserveSelection headerVisible=true
+                columns
+                    column resizable sortable name='Album' fieldName='album' 
+                        text value='{album}'
+                    column resizable sortable name='Artist' fieldName='type'
+                        text value='{artist}'
+                    column resizable sortable name='Release date' fieldName='date' 
+                        text value='{date}'
+                    column resizable sortable name='Id' fieldName='albumId'
+                        text value='{albumId}'
+                items id=gridItems
+
+    `)
     
     for (i=0; i < returnArray.length; i++) {
-        // let album = await queryAlbum(returnArray[i].id);
-        // console.log("....album.....");
-        // console.log(album);
+
         await p.send(`
-                    add text to=results value="ALBUM:${returnArray[i].title} ARTIST:${returnArray[i]['artist-credit'][0].artist.name} RELEASE:${returnArray[i]['first-release-date']}"
+            add to=results:gridItems 
+                item album="${returnArray[i].title}" artist="${returnArray[i]['artist-credit'][0].artist.name}" date="${returnArray[i]['first-release-date']}" albumId="${returnArray[i].id}"
         `)
+
     }
     await p.send(`
         remove results:searchspinner
